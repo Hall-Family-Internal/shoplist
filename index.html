@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customizable Shopping List</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        #shopping-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        #shopping-list li {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            border: 1px solid #ccc;
+            margin: 5px 0;
+            border-radius: 5px;
+        }
+        #add-item {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Customizable Shopping List</h1>
+    <ul id="shopping-list"></ul>
+
+    <input type="text" id="item-input" placeholder="Enter item name" />
+    <button id="add-item">Add Item</button>
+
+    <script>
+        const shoppingList = document.getElementById('shopping-list');
+        const itemInput = document.getElementById('item-input');
+        const addItemButton = document.getElementById('add-item');
+
+        addItemButton.addEventListener('click', function() {
+            const itemText = itemInput.value.trim();
+            if (itemText) {
+                const listItem = document.createElement('li');
+                listItem.innerHTML = `
+                    ${itemText} <button class="remove-item">Remove</button>
+                `;
+                shoppingList.appendChild(listItem);
+                itemInput.value = '';
+
+                const removeButton = listItem.querySelector('.remove-item');
+                removeButton.addEventListener('click', function() {
+                    shoppingList.removeChild(listItem);
+                });
+            }
+        });
+    </script>
+
+</body>
+</html>
