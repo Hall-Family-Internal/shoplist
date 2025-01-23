@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Customizable Shopping List</title>
+    <title>Advanced Customizable Shopping List</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
+            background-color: #f4f4f4;
         }
         #shopping-list {
             list-style-type: none;
@@ -16,45 +17,116 @@
         #shopping-list li {
             display: flex;
             justify-content: space-between;
+            align-items: center;
             padding: 10px;
             border: 1px solid #ccc;
             margin: 5px 0;
             border-radius: 5px;
+            background-color: #fff;
         }
         #add-item {
             margin-top: 20px;
+            display: flex;
+        }
+        #item-input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+        button {
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #28a745;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .edit-button {
+            background-color: #007bff;
+        }
+        .edit-button:hover {
+            background-color: #0069d9;
+        }
+        .remove-button {
+            background-color: #dc3545;
+        }
+        .remove-button:hover {
+            background-color: #c82333;
         }
     </style>
 </head>
 <body>
 
-    <h1>Customizable Shopping List</h1>
+    <h1>Advanced Customizable Shopping List</h1>
     <ul id="shopping-list"></ul>
 
-    <input type="text" id="item-input" placeholder="Enter item name" />
-    <button id="add-item">Add Item</button>
+    <div id="add-item">
+        <input type="text" id="item-input" placeholder="Enter item name" />
+        <button id="add-item-button">Add Item</button>
+    </div>
 
     <script>
         const shoppingList = document.getElementById('shopping-list');
         const itemInput = document.getElementById('item-input');
-        const addItemButton = document.getElementById('add-item');
+        const addItemButton = document.getElementById('add-item-button');
+
+        // Load items from local storage on page load
+        document.addEventListener('DOMContentLoaded', loadItems);
 
         addItemButton.addEventListener('click', function() {
             const itemText = itemInput.value.trim();
             if (itemText) {
-                const listItem = document.createElement('li');
-                listItem.innerHTML = `
-                    ${itemText} <button class="remove-item">Remove</button>
-                `;
-                shoppingList.appendChild(listItem);
+                addItemToList(itemText);
                 itemInput.value = '';
-
-                const removeButton = listItem.querySelector('.remove-item');
-                removeButton.addEventListener('click', function() {
-                    shoppingList.removeChild(listItem);
-                });
+                saveItems();
             }
         });
+
+        function addItemToList(itemText) {
+            const listItem = document.createElement('li');
+            listItem.innerHTML = `
+                <span class="item-text">${itemText}</span>
+                <div>
+                    <button class="edit-button">Edit</button>
+                    <button class="remove-button">Remove</button>
+                </div>
+            `;
+            shoppingList.appendChild(listItem);
+
+            const removeButton = listItem.querySelector('.remove-button');
+            removeButton.addEventListener('click', function() {
+                shoppingList.removeChild(listItem);
+                saveItems();
+            });
+
+            const editButton = listItem.querySelector('.edit-button');
+            editButton.addEventListener('click', function() {
+                const currentItemText = listItem.querySelector('.item-text');
+                const newItemText = prompt('Edit item:', currentItemText.innerText);
+                if (newItemText) {
+                    currentItemText.innerText = newItemText;
+                    saveItems();
+                }
+            });
+        }
+
+        function saveItems() {
+            const items = [];
+            document.querySelectorAll('#shopping-list li .item-text').forEach(item => {
+                items.push(item.innerText);
+            });
+            localStorage.setItem('shoppingList', JSON.stringify(items));
+        }
+
+        function loadItems() {
+            const items = JSON.parse(localStorage.getItem('shoppingList')) || [];
+            items.forEach(item => addItemToList(item));
+        }
     </script>
 
 </body>
